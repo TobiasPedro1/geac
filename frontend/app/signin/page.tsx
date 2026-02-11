@@ -36,9 +36,8 @@ export default function SignInPage() {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
       
-      // Seguindo o padrão REST, assumindo que o endpoint seja /signin ou /login
-      // Ajuste o endpoint conforme a sua API real
-      const response = await fetch(`${API_URL}/signin`, {
+      // Seguindo o padrão REST, assumindo que o endpoint seja /login
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
