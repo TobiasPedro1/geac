@@ -8,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -22,8 +23,12 @@ public class User implements UserDetails {
     private UUID id;
     private String email;
     private String name;
+    @Column(name = "password_hash",nullable = false)
     private String password;
+    @Column(name = "user_type",nullable = false)
     private String role;
+    @Column(updatable = false)
+    private LocalDateTime created_at = LocalDateTime.now();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

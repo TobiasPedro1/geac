@@ -14,5 +14,6 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     User registerToUser(RegisterRequestDTO registerRequestDTO);
 
+    @Mapping(target = "message", constant = "User registered successfully")
     RegisterResponseDTO userToRegisterResponse(User user);
 }
