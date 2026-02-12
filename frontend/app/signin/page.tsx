@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 
 interface SignInData {
-  email: "",
-  password: "",
+  email: string;
+  password: string;
 }
 
 interface CustomJwtPayload {
@@ -42,9 +42,8 @@ export default function SignInPage() {
     setError(null);
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
       
-      // Seguindo o padrão REST, assumindo que o endpoint seja /login
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
@@ -62,9 +61,9 @@ export default function SignInPage() {
 
       const data = await response.json();
 
-      // Idealmente, o token deve ser armazenado em HttpOnly Cookies pelo backend.
       if (data.token) {
         localStorage.setItem("token", data.token);
+
         try {
           //decodifica o token para extrair os dados
           const decoded = jwtDecode<CustomJwtPayload>(data.token);
@@ -81,9 +80,8 @@ export default function SignInPage() {
         }
       }
 
-      // Redireciona para a home ou dashboard após login
       router.push("/");
-      router.refresh(); // Força uma atualização para que componentes reconheçam o novo estado de auth
+      router.refresh();
 
     } catch (error) {
       console.error("Erro no login:", error);
@@ -109,7 +107,7 @@ export default function SignInPage() {
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm text-center animate-pulse">
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm text-center">
               {error}
             </div>
           )}
@@ -153,15 +151,6 @@ export default function SignInPage() {
                 disabled={isLoading}
                 className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-md bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
               />
-              {/* Link opcional para recuperação de senha, comum em UX de login */}
-              <div className="text-right mt-1">
-                <Link 
-                  href="/forgot-password" 
-                  className="text-xs text-blue-600 hover:underline"
-                >
-                  Esqueceu a senha?
-                </Link>
-              </div>
             </div>
 
             <button
@@ -170,7 +159,6 @@ export default function SignInPage() {
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-2 px-4 rounded-md transition duration-200 mt-6 flex items-center justify-center"
             >
               {isLoading ? (
-                // Feedback visual simples de loading
                 <span className="flex items-center gap-2">
                   <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
