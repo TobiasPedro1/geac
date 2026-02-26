@@ -145,3 +145,13 @@ A plataforma está hospedada na nuvem utilizando a infraestrutura do Render com 
         npm run dev
 
 4: Acesse a aplicação em http://localhost:3000
+
+<br>
+
+⚙️ Perfis de Configuração (Spring Profiles)
+---
+A API foi arquitetada utilizando múltiplos perfis para garantir a separação de responsabilidades entre os ambientes:
+
+- Desenvolvimento (dev): É o perfil padrão. Utiliza o application.yaml e conecta-se a uma instância local do PostgreSQL. Ideal para o desenvolvimento diário.
+- Testes / CI (test): Ativado através do application-test.yaml. Utiliza o banco de dados em memória H2. É utilizado automaticamente pela esteira do GitHub Actions para rodar a suíte de testes sem depender de infraestrutura externa. Para rodar localmente: mvn clean test -Dspring.profiles.active=test.
+- Produção (prod): Ativado através do application-prod.yaml. Utiliza variáveis de ambiente injetadas pelo Render para conectar ao banco PostgreSQL na nuvem e desativa a exibição de logs SQL por segurança.
