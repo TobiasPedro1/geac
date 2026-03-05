@@ -13,7 +13,7 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(target = "password", ignore = true)
-    @Mapping(target = "created_at", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "authorities", ignore = true)
     User registerToUser(RegisterRequestDTO registerRequestDTO);
