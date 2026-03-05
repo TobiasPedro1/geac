@@ -76,7 +76,7 @@ public class OrganizerMemberService {
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado nesta organização."));
         var user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User nao existe"));
         if (user.getRole().equals(Role.ORGANIZER)) {
-            user.setRole(Role.STUDENT); //todo: aqui teriamos que guardar um old-role seila, mas n acho q precisa por hora
+            user.setRole(Role.STUDENT);
             userRepository.save(user);
         }
         memberRepository.delete(memberLink);

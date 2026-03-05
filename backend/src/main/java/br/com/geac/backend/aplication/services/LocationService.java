@@ -22,7 +22,6 @@ public class LocationService {
     private final LocationMapper locationMapper;
 
     @Transactional
-    //TODO: constrain no banco para verificar unicidade
     public LocationResponseDTO createLocation(LocationRequestDTO dto) {
         if (locationRepository.existsByZipCodeAndNumberAndName(dto.zipCode(), dto.number(), dto.name())) {
             throw new LocationAlreadyExistsException("Location with the same zip code,number and name already exists"); // se precisar poe reference point tbm

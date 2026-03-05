@@ -51,13 +51,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(
+    protected  ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         Map<String, String> errorFields = new LinkedHashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach((error) -> {
-            errorFields.put(error.getField(), error.getDefaultMessage());
-        });
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+            errorFields.put(error.getField(), error.getDefaultMessage())
+        );
 
         return new ResponseEntity<>(
                 ExceptionDetails.builder()

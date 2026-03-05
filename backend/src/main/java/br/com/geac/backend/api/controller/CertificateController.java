@@ -41,9 +41,9 @@ public class CertificateController {
     }
 
     private UUID extractUserIdFromAuth(Authentication authentication) {
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
-            User principal = (User) authentication.getPrincipal();
-            return principal.getId();
+        if (authentication != null && authentication.getPrincipal() instanceof User userprincipal) {
+            userprincipal = (User) authentication.getPrincipal();
+            return userprincipal.getId();
         }
         throw new CertificateNotAvailableException("Acesso negado: Usuário não identificado.");
     }

@@ -30,7 +30,6 @@ public class EvaluationService {
     private final RegistrationRepository registrationRepository;
     private final EventRepository eventRepository;
     private final EvaluationMapper mapper;
-    //TODO: EDITAR E REMOVER
 
     public EvaluationResponseDTO createEvaluation(EvaluationRequestDTO dto, User authenticatedUser) {
 

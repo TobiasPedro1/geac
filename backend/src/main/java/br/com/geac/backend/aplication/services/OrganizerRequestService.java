@@ -38,7 +38,7 @@ public class OrganizerRequestService {
     }
 
     @Transactional
-    public void approveRequest(Integer requestId) { // TODO:DEVERIA USAR ADDMEMBER de organizer member
+    public void approveRequest(Integer requestId) {
         OrganizerRequest request = findRequestOrThrow(requestId);
         var user = userRepository.findById(request.getUser().getId())
                 .orElseThrow(()->new UserNotFoundException("Usuário nao encontrado"));

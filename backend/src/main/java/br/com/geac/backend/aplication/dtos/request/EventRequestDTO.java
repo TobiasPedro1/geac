@@ -31,7 +31,7 @@ public record EventRequestDTO(
         @Min(value = 1, message = "A capacidade deve ser de no mínimo 1 pessoa")
         Integer maxCapacity,
 
-        @NotNull(message = "O ID da categoria é obrigatório") //TODO: Verificar se vai ser 1 ou varias
+        @NotNull(message = "O ID da categoria é obrigatório")
         Integer categoryId,
 
         @NotNull(message = "A lista de requisitos do evento é obrigatório")

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmailService {
 
-    //TODO: descomentar dps mailSender.send(message) qnd for pra prod;
     //@Value("${spring.mail.username}")
     private String remetente;
     private final JavaMailSender mailSender;

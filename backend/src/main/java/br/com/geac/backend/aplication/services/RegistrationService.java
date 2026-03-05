@@ -55,7 +55,7 @@ public class RegistrationService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Evento não encontrado."));
 
-//TODO        validateOrganizerAccess(event);
+       validateOrganizerAccess(event);
 
         // 3. Busca as inscrições e converte para DTO
         List<Registration> registrations = registrationRepository.findByEventId(eventId);
@@ -159,7 +159,7 @@ public class RegistrationService {
         boolean isMember = organizerMemberRepository.existsByOrganizerIdAndUserId(event.getOrganizer().getId(), loggedUser.getId());
 
         if (!isAdmin && !isMember) {
-            throw new BadRequestException("Acesso negado: Você não é membro da organização responsável por este evento."); //todo colocar forbiden no handler ou unauthorized
+            throw new BadRequestException("Acesso negado: Você não é membro da organização responsável por este evento.");
         }
     }
 

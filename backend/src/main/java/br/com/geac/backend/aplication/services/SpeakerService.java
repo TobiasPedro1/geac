@@ -60,7 +60,7 @@ public class SpeakerService {
         if (repository.existsByNameAndEmailAndIdNot(speaker.getName(), speaker.getEmail(), id)) {
             throw new SpeakerAlreadyExistsException("Another speaker with the same name and email already exists");
         }
-        //TODO:-> NAO MEXER NAO MEXER NAO MEXER <- verificacao meia boca, se der melhorar dps, assim sempre vai recriar no banco
+        //-> NAO MEXER NAO MEXER NAO MEXER <- verificacao meia boca, se der melhorar dps, assim sempre vai recriar no banco
         if (dto.qualifications() != null && !dto.qualifications().isEmpty() && qualificationsChanged(speaker, dto.qualifications())) {
             var qualifications = resolveQualifications(dto.qualifications());
             speaker.setQualifications(qualifications);
