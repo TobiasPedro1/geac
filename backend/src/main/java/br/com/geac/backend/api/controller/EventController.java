@@ -1,0 +1,69 @@
+package br.com.geac.backend.api.controller;
+
+import br.com.geac.backend.aplication.dtos.response.EventResponseDTO;
+import br.com.geac.backend.aplication.dtos.request.EventPatchRequestDTO;
+import br.com.geac.backend.aplication.dtos.request.EventRequestDTO;
+import br.com.geac.backend.aplication.services.EventService;
+import br.com.geac.backend.domain.entities.User;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/events")
+@RequiredArgsConstructor
+public class EventController {
+    private final EventService eventService;
+
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity<EventResponseDTO> createEvent(@RequestBody @Valid EventRequestDTO dto) {
+        EventResponseDTO response = eventService.createEvent(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EventResponseDTO>> getAllEvents() { //nao carrega contagem, creio q n vai bugar pq so pega por id no front
+        List<EventResponseDTO> events = eventService.getAllEvents();
+        return ResponseEntity.ok(events);
+    }
+
+    @GetMapping("/myorgsevents")
+    public ResponseEntity<List<EventResponseDTO>> getOrganizerEvents(@AuthenticationPrincipal User authenticatedUser) { //nao carrega contagem, creio q n vai bugar pq so pega por id no front
+        List<EventResponseDTO> events = eventService.getOrganizerEvents(authenticatedUser);
+        return ResponseEntity.ok(events);
+    }
+
+    @GetMapping("/my-events")
+    public ResponseEntity<List<EventResponseDTO>> getMyEvents() {
+        List<EventResponseDTO> events = eventService.getMyEvents();
+        return ResponseEntity.ok(events);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EventResponseDTO> getEventById(@PathVariable UUID id) {
+        EventResponseDTO event = eventService.getEventById(id);
+        return ResponseEntity.ok(event);
+    }
+
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity<EventResponseDTO> updateEvent(@PathVariable UUID id, @RequestBody @Valid EventPatchRequestDTO dto) {
+        EventResponseDTO updatedEvent = eventService.patchEvent(id, dto);
+        return ResponseEntity.ok(updatedEvent);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity<Void> deleteEvent(@PathVariable UUID id) {
+        eventService.deleteEvent(id);
+        return ResponseEntity.noContent().build();
+    }
+}

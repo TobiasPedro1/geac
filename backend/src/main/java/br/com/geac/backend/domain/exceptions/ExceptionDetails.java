@@ -1,0 +1,17 @@
+package br.com.geac.backend.domain.exceptions;
+
+import lombok.Data;
+import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDateTime;
+
+@SuperBuilder
+@Data
+public class ExceptionDetails {
+    private String title;
+    private int status;
+    private String details;
+    private Object message;
+    private LocalDateTime timestamp;
+
+}
