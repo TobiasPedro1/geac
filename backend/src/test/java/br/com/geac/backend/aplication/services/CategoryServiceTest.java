@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -119,9 +118,10 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Deve lancar excecao ao atualizar categoria inexistente")
     void updateCategory_NotFound_ThrowsException() {
+        CategoryPatchRequestDTO patchDTO = new CategoryPatchRequestDTO("x", "descriÃ§Ã£o longa aqui mesmo");
         when(repository.findById(99)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> categoryService.updateCategory(99, new CategoryPatchRequestDTO("x", "descriÃ§Ã£o longa aqui mesmo")))
+        assertThatThrownBy(() -> categoryService.updateCategory(99, patchDTO))
                 .isInstanceOf(RuntimeException.class);
     }
 

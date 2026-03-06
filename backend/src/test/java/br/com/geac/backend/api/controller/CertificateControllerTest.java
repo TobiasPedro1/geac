@@ -74,11 +74,12 @@ class CertificateControllerTest {
     @Test
     @DisplayName("metodos do controller devem lancar excecao quando principal e invalido")
     void methods_InvalidPrincipal() {
+        UUID eventId = UUID.randomUUID();
         when(authentication.getPrincipal()).thenReturn("anonymous");
 
         assertThatThrownBy(() -> controller.getMyCertificates(authentication))
                 .isInstanceOf(CertificateNotAvailableException.class);
-        assertThatThrownBy(() -> controller.downloadCertificate(UUID.randomUUID(), authentication))
+        assertThatThrownBy(() -> controller.downloadCertificate(eventId, authentication))
                 .isInstanceOf(CertificateNotAvailableException.class);
     }
 }

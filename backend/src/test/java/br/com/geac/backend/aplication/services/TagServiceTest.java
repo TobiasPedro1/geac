@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -118,9 +117,10 @@ class TagServiceTest {
     @Test
     @DisplayName("Deve lancar excecao ao atualizar tag inexistente")
     void updateTag_NotFound_ThrowsException() {
+        TagRequestDTO updateRequest = new TagRequestDTO("x");
         when(tagRepository.findById(99)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> tagService.updateSpeaker(99, new TagRequestDTO("x")))
+        assertThatThrownBy(() -> tagService.updateSpeaker(99, updateRequest))
                 .isInstanceOf(TagNotFoundException.class);
     }
 

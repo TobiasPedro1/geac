@@ -23,7 +23,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -97,7 +96,7 @@ class CertificateServiceTest {
         attended.setAttended(true);
 
         when(registrationRepository.findByEventId(eventId)).thenReturn(List.of(attended));
-        when(certificateRepository.existsByUserIdAndEventId(eq(user.getId()), eq(eventId))).thenReturn(true);
+        when(certificateRepository.existsByUserIdAndEventId(user.getId(), eventId)).thenReturn(true);
 
         service.issueCertificatesForEvent(eventId);
 
@@ -108,10 +107,10 @@ class CertificateServiceTest {
     @DisplayName("downloadCertificatePdf deve retornar bytes gerados quando certificado existe")
     void downloadCertificatePdf_Success() {
         UUID userId = UUID.randomUUID();
-        UUID eventId = UUID.randomUUID();
+        UUID certificateEventId = UUID.randomUUID();
 
         Event certEvent = new Event();
-        certEvent.setId(eventId);
+        certEvent.setId(certificateEventId);
         certEvent.setTitle("Event Title");
         certEvent.setWorkloadHours(4);
         certEvent.setStartTime(java.time.LocalDateTime.now().minusDays(2));
@@ -132,10 +131,10 @@ class CertificateServiceTest {
         certificate.setEvent(certEvent);
         certificate.setValidationCode("GEAC-ABC12345");
 
-        when(certificateRepository.findByUserIdAndEventId(userId, eventId))
+        when(certificateRepository.findByUserIdAndEventId(userId, certificateEventId))
                 .thenReturn(java.util.Optional.of(certificate));
 
-        byte[] pdf = service.downloadCertificatePdf(userId, eventId);
+        byte[] pdf = service.downloadCertificatePdf(userId, certificateEventId);
 
         assertThat(pdf).isNotEmpty();
     }

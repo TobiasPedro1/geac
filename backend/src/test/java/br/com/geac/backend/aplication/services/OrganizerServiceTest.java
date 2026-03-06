@@ -116,9 +116,10 @@ class OrganizerServiceTest {
     @Test
     @DisplayName("Deve lancar excecao quando organizacao nao encontrada por ID")
     void getOrganizerById_NotFound_ThrowsException() {
+        UUID missingId = UUID.randomUUID();
         when(organizerRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> organizerService.getOrganizerById(UUID.randomUUID()))
+        assertThatThrownBy(() -> organizerService.getOrganizerById(missingId))
                 .isInstanceOf(OrganizerNotFoundExceptio.class);
     }
 
@@ -178,9 +179,10 @@ class OrganizerServiceTest {
     @Test
     @DisplayName("Deve lancar excecao ao deletar organizacao inexistente")
     void deleteOrganizer_NotFound_ThrowsException() {
+        UUID missingId = UUID.randomUUID();
         when(organizerRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> organizerService.deleteOrganizer(UUID.randomUUID()))
+        assertThatThrownBy(() -> organizerService.deleteOrganizer(missingId))
                 .isInstanceOf(OrganizerNotFoundExceptio.class);
     }
 

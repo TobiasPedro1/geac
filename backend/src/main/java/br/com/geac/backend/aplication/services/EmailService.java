@@ -1,8 +1,8 @@
 package br.com.geac.backend.aplication.services;
 
 import br.com.geac.backend.domain.entities.Event;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,11 +12,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-    //@Value("${spring.mail.username}")
-    private String remetente;
+    private final String remetente;
+    private final JavaMailSender mailSender;
 
-    @Autowired(required = false)
-    private JavaMailSender mailSender;
+    public EmailService(
+            @Value("${spring.mail.username:no-reply@geac.local}") String remetente,
+            @Autowired(required = false) JavaMailSender mailSender
+    ) {
+        this.remetente = remetente;
+        this.mailSender = mailSender;
+    }
 
     public void sendAlert(String email, Event event) {
         if (mailSender == null) {
@@ -28,6 +33,7 @@ public class EmailService {
         message.setTo(email);
         message.setSubject("ALERT" + event.getTitle());
         message.setText(buildMessage(event));
+        mailSender.send(message);
         log.info("SENDING ALERT" + message.getText());
     }
 

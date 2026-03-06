@@ -125,7 +125,7 @@ class MapperCoverageTest {
         partial.setRequirements(null);
         partial.setTags(null);
         EventResponseDTO partialDto = mapper.toResponseDTO(partial, null, null);
-        assertThat(partialDto.registeredCount()).isEqualTo(0);
+        assertThat(partialDto.registeredCount()).isZero();
         assertThat(mapper.mapSpeakers(partial)).isEmpty();
 
         EventRequestDTO withDefaultNotify = new EventRequestDTO(

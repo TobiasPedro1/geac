@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -152,22 +151,24 @@ class EvaluationServiceTest {
     @Test
     @DisplayName("getEventEvaluations deve lancar excecao quando evento nao existe")
     void getEventEvaluations_EventNotFound() {
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.empty());
+        UUID eventId = event.getId();
+        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.getEventEvaluations(event.getId()))
+        assertThatThrownBy(() -> service.getEventEvaluations(eventId))
                 .isInstanceOf(EventNotFoundException.class);
     }
 
     @Test
     @DisplayName("getEventEvaluations deve mapear avaliacoes")
     void getEventEvaluations_Success() {
+        UUID eventId = event.getId();
         Evaluation eval = new Evaluation();
-        EvaluationResponseDTO response = new EvaluationResponseDTO(1L, registration.getId(), event.getId(), "Event", user.getId(), "User", 5, "Great", LocalDateTime.now());
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        EvaluationResponseDTO response = new EvaluationResponseDTO(1L, registration.getId(), eventId, "Event", user.getId(), "User", 5, "Great", LocalDateTime.now());
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(evaluationRepository.findAllByRegistrationEvent(event)).thenReturn(List.of(eval));
         when(mapper.toDTO(eval)).thenReturn(response);
 
-        List<EvaluationResponseDTO> result = service.getEventEvaluations(event.getId());
+        List<EvaluationResponseDTO> result = service.getEventEvaluations(eventId);
 
         assertThat(result).hasSize(1);
     }

@@ -93,12 +93,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
-
-    public String getEmail() {
-    return email;
-    }
-
-    public String getName() {
-        return name;
-    }
 }

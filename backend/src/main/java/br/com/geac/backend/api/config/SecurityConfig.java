@@ -23,11 +23,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final SecurityFilter securityFilter;
-    private static final String ADMIN = "ADMIN";
-    private static final String ORGANIZER = "ORGANIZER";
-    private static final String EVENTS_ENDPOINT = "/events";
-    private static final String CATEGORIES_ENDPOINT = "/categories";
-    private static final String ORGANIZER_ENDPOINT = "/organizers/**";
+    private static final String ROLE_ADMIN = "ADMIN";
+    private static final String ROLE_ORGANIZER = "ORGANIZER";
+    private static final String ROLE_PROFESSOR = "PROFESSOR";
+
+    private static final String PATH_AUTH_ALL = "/auth/**";
+    private static final String PATH_LOGOUT = "/auth/logout";
+    private static final String PATH_EVENTS = "/events";
+    private static final String PATH_EVENTS_ALL = "/events/**";
+    private static final String PATH_CATEGORIES = "/categories";
+    private static final String PATH_LOCATIONS = "/locations";
+    private static final String PATH_REQUIREMENTS = "/requirements";
+    private static final String PATH_ORGANIZERS = "/organizers";
+    private static final String PATH_ORGANIZERS_ALL = "/organizers/**";
+    private static final String PATH_VIEWS_ALL = "/views/**";
+    private static final String PATH_ORGANIZER_REQUESTS = "/organizer-requests";
+    private static final String PATH_ORGANIZER_REQUESTS_PENDING = "/organizer-requests/pending";
+    private static final String PATH_ORGANIZER_REQUESTS_APPROVE = "/organizer-requests/*/approve";
+    private static final String PATH_ORGANIZER_REQUESTS_REJECT = "/organizer-requests/*/reject";
+    private static final String PATH_ORGANIZER_MEMBERS = "/organizers/*/members";
+    private static final String PATH_ORGANIZER_MEMBERS_ALL = "/organizers/*/members/**";
+    private static final String PATH_REGISTRATIONS_BULK = "/registrations/*/attendance/bulk";
+    private static final String PATH_REGISTRATIONS_EVENT = "/registrations/event/*";
 
     @SuppressWarnings("java:S4502")
     @Bean
@@ -40,34 +57,47 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
 
 
-                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, PATH_AUTH_ALL).permitAll()
                         //eventos: qualquer autenticado passa pela rota. a validação se e membro da Org ou Admin será feita no Service.
-                        .requestMatchers(HttpMethod.GET, "/events/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, PATH_EVENTS_ALL).authenticated()
                         //acoes restritas ao ADMIN
-                        .requestMatchers(HttpMethod.GET, "/organizer-requests/pending").hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.POST, "/organizer-requests/*/approve").hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.POST, "/organizer-requests/*/reject").hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.POST, "/organizers", ORGANIZER_ENDPOINT).hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.PUT, ORGANIZER_ENDPOINT).hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.DELETE, ORGANIZER_ENDPOINT).hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.POST, "/organizers/*/members").hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.DELETE, "/organizers/*/members/**").hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.GET, PATH_ORGANIZER_REQUESTS_PENDING).hasRole(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.POST, PATH_ORGANIZER_REQUESTS_APPROVE).hasRole(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.POST, PATH_ORGANIZER_REQUESTS_REJECT).hasRole(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.POST, PATH_ORGANIZERS, PATH_ORGANIZERS_ALL).hasRole(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.PUT, PATH_ORGANIZERS_ALL).hasRole(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, PATH_ORGANIZERS_ALL).hasRole(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.POST, PATH_ORGANIZER_MEMBERS).hasRole(ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, PATH_ORGANIZER_MEMBERS_ALL).hasRole(ROLE_ADMIN)
                         //solicitações: exclusiva de professor/organizer/admin
-                        .requestMatchers(HttpMethod.PUT, "/registrations/*/attendance/bulk").hasAnyRole("PROFESSOR", ORGANIZER, ADMIN)
-                        .requestMatchers(HttpMethod.GET, "/registrations/event/*").hasAnyRole("PROFESSOR", ORGANIZER, ADMIN)
+                        .requestMatchers(HttpMethod.PUT, PATH_REGISTRATIONS_BULK)
+                        .hasAnyRole(ROLE_PROFESSOR, ROLE_ORGANIZER, ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.GET, PATH_REGISTRATIONS_EVENT)
+                        .hasAnyRole(ROLE_PROFESSOR, ROLE_ORGANIZER, ROLE_ADMIN)
 
                         //solicitacoes: usuario comum pode apenas CRIAR a solicitação
-                        .requestMatchers(HttpMethod.POST, "/organizer-requests").authenticated()
-                        .requestMatchers(HttpMethod.GET, CATEGORIES_ENDPOINT, "/locations", "/requirements", "/organizers", "/organizers/**,", "/views/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, PATH_ORGANIZER_REQUESTS).authenticated()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                PATH_CATEGORIES,
+                                PATH_LOCATIONS,
+                                PATH_REQUIREMENTS,
+                                PATH_ORGANIZERS,
+                                PATH_ORGANIZERS_ALL,
+                                PATH_VIEWS_ALL
+                        ).authenticated()
 
                         //solicitações: ADMIN e organizer
-                        .requestMatchers(HttpMethod.POST, CATEGORIES_ENDPOINT, EVENTS_ENDPOINT, "/events/**").hasAnyRole(ADMIN, ORGANIZER)
-                        .requestMatchers(HttpMethod.PATCH, CATEGORIES_ENDPOINT, EVENTS_ENDPOINT).hasAnyRole(ADMIN, ORGANIZER)
-                        .requestMatchers(HttpMethod.DELETE, CATEGORIES_ENDPOINT, EVENTS_ENDPOINT).hasAnyRole(ADMIN, ORGANIZER)
+                        .requestMatchers(HttpMethod.POST, PATH_CATEGORIES, PATH_EVENTS, PATH_EVENTS_ALL)
+                        .hasAnyRole(ROLE_ADMIN, ROLE_ORGANIZER)
+                        .requestMatchers(HttpMethod.PATCH, PATH_CATEGORIES, PATH_EVENTS)
+                        .hasAnyRole(ROLE_ADMIN, ROLE_ORGANIZER)
+                        .requestMatchers(HttpMethod.DELETE, PATH_CATEGORIES, PATH_EVENTS)
+                        .hasAnyRole(ROLE_ADMIN, ROLE_ORGANIZER)
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
-                        .logoutUrl("/auth/logout")
+                        .logoutUrl(PATH_LOGOUT)
                         .permitAll()
                         .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true))

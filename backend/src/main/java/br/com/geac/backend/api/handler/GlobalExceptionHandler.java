@@ -51,7 +51,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected  ResponseEntity<Object> handleMethodArgumentNotValid(
+    protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         Map<String, String> errorFields = new LinkedHashMap<>();
@@ -71,7 +71,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public @Nullable ResponseEntity<Object> handleConflict(DataIntegrityViolationException e) {
+    public ResponseEntity<Object> handleConflict(DataIntegrityViolationException e) {
         return new ResponseEntity<>(
                 ExceptionDetails.builder()
                         .title("Erro de integridade de dados")

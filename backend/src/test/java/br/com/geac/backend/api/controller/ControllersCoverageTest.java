@@ -12,7 +12,6 @@ import br.com.geac.backend.aplication.dtos.request.SpeakerPatchRequestDTO;
 import br.com.geac.backend.aplication.dtos.request.SpeakerRequestDTO;
 import br.com.geac.backend.aplication.dtos.request.StudentHoursResponseDTO;
 import br.com.geac.backend.aplication.dtos.request.TagRequestDTO;
-import br.com.geac.backend.aplication.dtos.request.CategoryPatchRequestDTO;
 import br.com.geac.backend.aplication.dtos.request.CategoryRequestDTO;
 import br.com.geac.backend.aplication.dtos.response.CategoryResponseDTO;
 import br.com.geac.backend.aplication.dtos.response.EvaluationResponseDTO;

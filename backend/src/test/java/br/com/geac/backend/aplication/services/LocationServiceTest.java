@@ -159,10 +159,12 @@ class LocationServiceTest {
     @Test
     @DisplayName("Deve lancar excecao ao atualizar localizacao inexistente")
     void updateLocation_NotFound_ThrowsException() {
+        LocationPatchRequestDTO patchDTO = new LocationPatchRequestDTO(
+                null, null, null, null, null, null, null, null, null, null
+        );
         when(locationRepository.findById(99)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> locationService.updateLocation(99,
-                new LocationPatchRequestDTO(null, null, null, null, null, null, null, null, null, null)))
+        assertThatThrownBy(() -> locationService.updateLocation(99, patchDTO))
                 .isInstanceOf(LocationNotFoundException.class);
     }
 

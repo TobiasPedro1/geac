@@ -235,10 +235,11 @@ class EventServiceTest {
         admin.setId(UUID.randomUUID());
         admin.setRole(Role.ADMIN);
         setAuthentication(admin);
+        UUID eventId = event.getId();
 
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
 
-        assertThatCode(() -> eventService.deleteEvent(event.getId())).doesNotThrowAnyException();
+        assertThatCode(() -> eventService.deleteEvent(eventId)).doesNotThrowAnyException();
         verify(eventRepository).delete(event);
     }
 
@@ -246,10 +247,11 @@ class EventServiceTest {
     @DisplayName("Deve lancar excecao quando organizador nao pertence a organizacao do evento ao deletar")
     void deleteEvent_OrganizerNotMember_ThrowsAccessDenied() {
         setAuthentication(organizer);
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        UUID eventId = event.getId();
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(organizerMemberRepository.existsByOrganizerIdAndUserId(org.getId(), organizer.getId())).thenReturn(false);
 
-        assertThatThrownBy(() -> eventService.deleteEvent(event.getId()))
+        assertThatThrownBy(() -> eventService.deleteEvent(eventId))
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(eventRepository, never()).delete(any(Event.class));
@@ -362,6 +364,7 @@ class EventServiceTest {
         admin.setId(UUID.randomUUID());
         admin.setRole(Role.ADMIN);
         setAuthentication(admin);
+        UUID eventId = event.getId();
 
         EventPatchRequestDTO patch = new EventPatchRequestDTO(
                 "Novo titulo",
@@ -380,10 +383,10 @@ class EventServiceTest {
                 null
         );
 
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(eventRepository.existsByTitleIgnoreCaseAndOrganizerIdAndStartTime(any(), any(), any())).thenReturn(true);
 
-        assertThatThrownBy(() -> eventService.patchEvent(event.getId(), patch))
+        assertThatThrownBy(() -> eventService.patchEvent(eventId, patch))
                 .isInstanceOf(EventAlreadyExistsException.class);
     }
 

@@ -79,15 +79,16 @@ class RegistrationServiceTest {
     @DisplayName("Deve inscrever usuario no evento com sucesso")
     void registerToEvent_Success() {
         setAuthentication(student);
+        UUID eventId = event.getId();
 
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(registrationRepository.existsByUserIdAndEventId(any(), any())).thenReturn(false);
         when(organizerMemberRepository.existsByOrganizerIdAndUserId(any(), any())).thenReturn(false);
         when(registrationRepository.countByEventIdAndStatus(any(), any())).thenReturn(10L);
         when(eventRepository.save(any())).thenReturn(event);
         when(registrationRepository.save(any())).thenReturn(registration);
 
-        assertThatCode(() -> registrationService.registerToEvent(event.getId()))
+        assertThatCode(() -> registrationService.registerToEvent(eventId))
                 .doesNotThrowAnyException();
 
         verify(registrationRepository).save(any(Registration.class));
@@ -98,10 +99,11 @@ class RegistrationServiceTest {
     @DisplayName("Deve lancar excecao quando evento nao encontrado ao inscrever")
     void registerToEvent_EventNotFound_ThrowsException() {
         setAuthentication(student);
+        UUID missingEventId = UUID.randomUUID();
 
         when(eventRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> registrationService.registerToEvent(UUID.randomUUID()))
+        assertThatThrownBy(() -> registrationService.registerToEvent(missingEventId))
                 .isInstanceOf(EventNotFoundException.class);
     }
 
@@ -109,11 +111,12 @@ class RegistrationServiceTest {
     @DisplayName("Deve lancar excecao quando usuario ja esta inscrito")
     void registerToEvent_AlreadySubscribed_ThrowsException() {
         setAuthentication(student);
+        UUID eventId = event.getId();
 
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(registrationRepository.existsByUserIdAndEventId(any(), any())).thenReturn(true);
 
-        assertThatThrownBy(() -> registrationService.registerToEvent(event.getId()))
+        assertThatThrownBy(() -> registrationService.registerToEvent(eventId))
                 .isInstanceOf(UserAlreadySubscribedInEvent.class)
                 .isInstanceOf(Exception.class);
     }
@@ -122,12 +125,13 @@ class RegistrationServiceTest {
     @DisplayName("Deve lancar excecao quando usuario e membro da organizacao promotora")
     void registerToEvent_MemberOfPromoterOrg_ThrowsException() {
         setAuthentication(student);
+        UUID eventId = event.getId();
 
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(registrationRepository.existsByUserIdAndEventId(any(), any())).thenReturn(false);
         when(organizerMemberRepository.existsByOrganizerIdAndUserId(any(), any())).thenReturn(true);
 
-        assertThatThrownBy(() -> registrationService.registerToEvent(event.getId()))
+        assertThatThrownBy(() -> registrationService.registerToEvent(eventId))
                 .isInstanceOf(MemberOfPromoterOrgException.class);
     }
 
@@ -135,14 +139,15 @@ class RegistrationServiceTest {
     @DisplayName("Deve lancar excecao quando evento esta lotado")
     void registerToEvent_MaxCapacity_ThrowsException() {
         setAuthentication(student);
+        UUID eventId = event.getId();
         event.setMaxCapacity(10);
 
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(registrationRepository.existsByUserIdAndEventId(any(), any())).thenReturn(false);
         when(organizerMemberRepository.existsByOrganizerIdAndUserId(any(), any())).thenReturn(false);
         when(registrationRepository.countByEventIdAndStatus(any(), any())).thenReturn(10L);
 
-        assertThatThrownBy(() -> registrationService.registerToEvent(event.getId()))
+        assertThatThrownBy(() -> registrationService.registerToEvent(eventId))
                 .isInstanceOf(EventMaxCapacityAchievedException.class);
     }
 
@@ -150,14 +155,15 @@ class RegistrationServiceTest {
     @DisplayName("Deve lancar excecao quando evento nao esta disponivel")
     void registerToEvent_EventNotAvailable_ThrowsException() {
         setAuthentication(student);
+        UUID eventId = event.getId();
         event.setStatus(EventStatus.COMPLETED);
 
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(registrationRepository.existsByUserIdAndEventId(any(), any())).thenReturn(false);
         when(organizerMemberRepository.existsByOrganizerIdAndUserId(any(), any())).thenReturn(false);
         when(registrationRepository.countByEventIdAndStatus(any(), any())).thenReturn(5L);
 
-        assertThatThrownBy(() -> registrationService.registerToEvent(event.getId()))
+        assertThatThrownBy(() -> registrationService.registerToEvent(eventId))
                 .isInstanceOf(EventNotAvailableException.class);
     }
 
@@ -165,16 +171,17 @@ class RegistrationServiceTest {
     @DisplayName("Deve inscrever com sucesso em evento UPCOMING")
     void registerToEvent_UpcomingEvent_Success() {
         setAuthentication(student);
+        UUID eventId = event.getId();
         event.setStatus(EventStatus.UPCOMING);
 
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(registrationRepository.existsByUserIdAndEventId(any(), any())).thenReturn(false);
         when(organizerMemberRepository.existsByOrganizerIdAndUserId(any(), any())).thenReturn(false);
         when(registrationRepository.countByEventIdAndStatus(any(), any())).thenReturn(5L);
         when(eventRepository.save(any())).thenReturn(event);
         when(registrationRepository.save(any())).thenReturn(registration);
 
-        assertThatCode(() -> registrationService.registerToEvent(event.getId()))
+        assertThatCode(() -> registrationService.registerToEvent(eventId))
                 .doesNotThrowAnyException();
     }
 
@@ -184,11 +191,12 @@ class RegistrationServiceTest {
     @DisplayName("Deve cancelar inscricao com sucesso")
     void cancelRegistration_Success() {
         setAuthentication(student);
+        UUID eventId = event.getId();
 
         when(registrationRepository.findByUserIdAndEventId(any(), any()))
                 .thenReturn(Optional.of(registration));
 
-        assertThatCode(() -> registrationService.cancelRegistration(event.getId()))
+        assertThatCode(() -> registrationService.cancelRegistration(eventId))
                 .doesNotThrowAnyException();
 
         verify(registrationRepository).delete(registration);
@@ -199,11 +207,12 @@ class RegistrationServiceTest {
     @DisplayName("Deve lancar excecao quando inscricao nao encontrada ao cancelar")
     void cancelRegistration_NotFound_ThrowsException() {
         setAuthentication(student);
+        UUID eventId = event.getId();
 
         when(registrationRepository.findByUserIdAndEventId(any(), any()))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> registrationService.cancelRegistration(event.getId()))
+        assertThatThrownBy(() -> registrationService.cancelRegistration(eventId))
                 .isInstanceOf(RegistrationNotFoundException.class);
     }
 
@@ -211,12 +220,13 @@ class RegistrationServiceTest {
     @DisplayName("Deve lancar excecao quando presenca ja foi validada")
     void cancelRegistration_AlreadyAttended_ThrowsException() {
         setAuthentication(student);
+        UUID eventId = event.getId();
         registration.setAttended(true);
 
         when(registrationRepository.findByUserIdAndEventId(any(), any()))
                 .thenReturn(Optional.of(registration));
 
-        assertThatThrownBy(() -> registrationService.cancelRegistration(event.getId()))
+        assertThatThrownBy(() -> registrationService.cancelRegistration(eventId))
                 .isInstanceOf(BadRequestException.class)
                 .isInstanceOf(Exception.class);
     }
@@ -239,9 +249,10 @@ class RegistrationServiceTest {
     @Test
     @DisplayName("Deve lancar excecao quando evento nao encontrado ao buscar inscricoes")
     void getRegistrationsByEvent_EventNotFound_ThrowsException() {
+        UUID missingEventId = UUID.randomUUID();
         when(eventRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> registrationService.getRegistrationsByEvent(UUID.randomUUID()))
+        assertThatThrownBy(() -> registrationService.getRegistrationsByEvent(missingEventId))
                 .isInstanceOf(EventNotFoundException.class);
     }
 
@@ -264,17 +275,18 @@ class RegistrationServiceTest {
     @DisplayName("Deve marcar presenca em bulk com sucesso como admin")
     void markAttendanceInBulk_AdminSuccess() {
         setAuthentication(admin);
+        UUID eventId = event.getId();
 
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(organizerMemberRepository.existsByOrganizerIdAndUserId(any(), any())).thenReturn(false);
 
         List<UUID> userIds = List.of(UUID.randomUUID());
 
-        assertThatCode(() -> registrationService.markAttendanceInBulk(event.getId(), userIds, true))
+        assertThatCode(() -> registrationService.markAttendanceInBulk(eventId, userIds, true))
                 .doesNotThrowAnyException();
 
-        verify(registrationRepository).updateAttendanceInBulk(event.getId(), userIds, true);
-        verify(certificateService).issueCertificatesForEvent(event.getId());
+        verify(registrationRepository).updateAttendanceInBulk(eventId, userIds, true);
+        verify(certificateService).issueCertificatesForEvent(eventId);
     }
 
     @Test
@@ -296,10 +308,12 @@ class RegistrationServiceTest {
     @DisplayName("Deve lancar excecao quando evento nao encontrado ao marcar presenca")
     void markAttendanceInBulk_EventNotFound_ThrowsException() {
         setAuthentication(admin);
+        UUID missingEventId = UUID.randomUUID();
+        List<UUID> userIds = List.of();
 
         when(eventRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> registrationService.markAttendanceInBulk(UUID.randomUUID(), List.of(), true))
+        assertThatThrownBy(() -> registrationService.markAttendanceInBulk(missingEventId, userIds, true))
                 .isInstanceOf(EventNotFoundException.class);
     }
 
@@ -307,11 +321,13 @@ class RegistrationServiceTest {
     @DisplayName("Deve lancar excecao quando usuario nao e membro da organizacao")
     void markAttendanceInBulk_NotMember_ThrowsException() {
         setAuthentication(student);
+        UUID eventId = event.getId();
+        List<UUID> userIds = List.of();
 
-        when(eventRepository.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(organizerMemberRepository.existsByOrganizerIdAndUserId(any(), any())).thenReturn(false);
 
-        assertThatThrownBy(() -> registrationService.markAttendanceInBulk(event.getId(), List.of(), true))
+        assertThatThrownBy(() -> registrationService.markAttendanceInBulk(eventId, userIds, true))
                 .isInstanceOf(BadRequestException.class);
     }
 

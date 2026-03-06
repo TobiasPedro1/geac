@@ -67,41 +67,45 @@ class OrganizerMemberServiceTest {
     @Test
     @DisplayName("addMember deve lancar excecao quando organizador nao existe")
     void addMember_OrganizerNotFound() {
+        AddMemberRequestDTO request = new AddMemberRequestDTO(userId);
         when(organizerRepository.findById(organizerId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.addMember(organizerId, new AddMemberRequestDTO(userId)))
+        assertThatThrownBy(() -> service.addMember(organizerId, request))
                 .isInstanceOf(OrganizerNotFoundExceptio.class);
     }
 
     @Test
     @DisplayName("addMember deve lancar excecao quando usuario nao existe")
     void addMember_UserNotFound() {
+        AddMemberRequestDTO request = new AddMemberRequestDTO(userId);
         when(organizerRepository.findById(organizerId)).thenReturn(Optional.of(organizer));
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.addMember(organizerId, new AddMemberRequestDTO(userId)))
+        assertThatThrownBy(() -> service.addMember(organizerId, request))
                 .isInstanceOf(UserNotFoundException.class);
     }
 
     @Test
     @DisplayName("addMember deve lancar excecao quando usuario ja e membro")
     void addMember_AlreadyMember() {
+        AddMemberRequestDTO request = new AddMemberRequestDTO(userId);
         when(organizerRepository.findById(organizerId)).thenReturn(Optional.of(organizer));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(memberRepository.existsByOrganizerIdAndUserId(organizerId, userId)).thenReturn(true);
 
-        assertThatThrownBy(() -> service.addMember(organizerId, new AddMemberRequestDTO(userId)))
+        assertThatThrownBy(() -> service.addMember(organizerId, request))
                 .isInstanceOf(UserIsAlreadyOrgMember.class);
     }
 
     @Test
     @DisplayName("addMember deve promover estudante para organizador")
     void addMember_PromoteStudent() {
+        AddMemberRequestDTO request = new AddMemberRequestDTO(userId);
         when(organizerRepository.findById(organizerId)).thenReturn(Optional.of(organizer));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(memberRepository.existsByOrganizerIdAndUserId(organizerId, userId)).thenReturn(false);
 
-        assertThatCode(() -> service.addMember(organizerId, new AddMemberRequestDTO(userId)))
+        assertThatCode(() -> service.addMember(organizerId, request))
                 .doesNotThrowAnyException();
 
         verify(userRepository).save(user);

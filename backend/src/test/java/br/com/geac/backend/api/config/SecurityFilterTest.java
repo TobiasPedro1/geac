@@ -5,6 +5,7 @@ import br.com.geac.backend.domain.entities.User;
 import br.com.geac.backend.domain.enums.Role;
 import br.com.geac.backend.infrastucture.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -16,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +44,7 @@ class SecurityFilterTest {
 
     @Test
     @DisplayName("doFilterInternal deve continuar cadeia quando header esta ausente")
-    void doFilterInternal_NoAuthHeader() throws Exception {
+    void doFilterInternal_NoAuthHeader() throws ServletException, IOException {
         when(request.getHeader("Authorization")).thenReturn(null);
 
         securityFilter.doFilterInternal(request, response, filterChain);
@@ -54,7 +56,7 @@ class SecurityFilterTest {
 
     @Test
     @DisplayName("doFilterInternal deve definir autenticacao quando usuario e encontrado")
-    void doFilterInternal_UserFound() throws Exception {
+    void doFilterInternal_UserFound() throws ServletException, IOException {
         User user = new User();
         user.setId(UUID.randomUUID());
         user.setEmail("user@test.com");
@@ -72,7 +74,7 @@ class SecurityFilterTest {
 
     @Test
     @DisplayName("doFilterInternal nao deve definir autenticacao quando repositorio retorna null")
-    void doFilterInternal_UserNotFound() throws Exception {
+    void doFilterInternal_UserNotFound() throws ServletException, IOException {
         when(request.getHeader("Authorization")).thenReturn("Bearer any-token");
         when(tokenService.validateToken("any-token")).thenReturn("missing@test.com");
         when(userRepository.findByEmail("missing@test.com")).thenReturn(null);
