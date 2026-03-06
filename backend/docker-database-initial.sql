@@ -350,7 +350,6 @@ VALUES ('apoio'),
 
 -- 50 USUÁRIOS (Alguns ADMIN, alguns STUDENT, alguns ORGANIZER)
 
--- palestrantes -> tem que ser 50 dps todo
 
 INSERT INTO speakers (name, bio, email)
 VALUES ('Dr. Alan Turing', 'Pai da computação e especialista em IA.', 'alan.turing@example.com'),
@@ -364,7 +363,6 @@ VALUES ('Dr. Alan Turing', 'Pai da computação e especialista em IA.', 'alan.tu
        ('Hedy Lamarr', 'Inventora da base para o Wi-Fi e Bluetooth.', 'hedy.lamarr@example.com'),
        ('Steve Wozniak', 'Cofundador da Apple e engenheiro de hardware.', 'steve.wozniak@example.com');
 
--- QUALIFICATIONS TODO
 INSERT INTO speaker_qualifications (speaker_id, title_name, institution)
 VALUES (1, 'Doutorado em Matemática', 'University of Cambridge'),
        (2, 'Nobel de Química', 'Sorbonne University'),

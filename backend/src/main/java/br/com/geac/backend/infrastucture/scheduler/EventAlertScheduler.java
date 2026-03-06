@@ -1,0 +1,65 @@
+package br.com.geac.backend.infrastucture.scheduler;
+
+import br.com.geac.backend.aplication.services.EventService;
+import br.com.geac.backend.aplication.services.NotificationService;
+import br.com.geac.backend.aplication.services.RegistrationService;
+import br.com.geac.backend.domain.entities.Event;
+import br.com.geac.backend.domain.entities.Registration;
+import br.com.geac.backend.domain.entities.User;
+import br.com.geac.backend.domain.enums.EventStatus;
+import br.com.geac.backend.infrastucture.repositories.EventRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+@Log4j2
+public class EventAlertScheduler {
+
+    private final EventService eventService;
+    private final EventRepository eventRepository;
+    private final RegistrationService registrationService;
+    private final NotificationService notificationService;
+
+    @Scheduled(cron = "0 0 * * * *")
+    public void checkCloseEvents() {
+
+        List<Event> closeEvents = eventService.getReadyToNotifyEvents();
+
+        if (closeEvents.isEmpty()) log.info("No Events Ready for notification");
+
+        for (Event event : closeEvents) {
+            notifyEventsParticipants(event);
+        }
+
+        log.info("Notified {} events",closeEvents.size());
+    }
+
+    private void notifyEventsParticipants(Event event) {
+        var registrationsByEvent = registrationService.getUnotifiedRegistrationsById(event.getId());
+
+        if (registrationsByEvent.isEmpty()) {
+            log.info("No Registrations for event {}", event.getTitle());
+            return;
+        }
+        List<User> users = registrationsByEvent.stream()
+                .map(Registration::getUser)
+                .toList();
+
+        notificationService.notifyAll(users, event);
+
+        registrationsByEvent.forEach(registration -> registration.setNotified(true));
+        registrationService.saveAll(registrationsByEvent);
+    }
+
+    @Scheduled(cron = "0 */1 * * * *")
+    public void updateEventStatus() {
+        log.info("Total de eventos atualizados: {}", eventService.updateEventStatus(LocalDateTime.now()));
+    }
+
+}

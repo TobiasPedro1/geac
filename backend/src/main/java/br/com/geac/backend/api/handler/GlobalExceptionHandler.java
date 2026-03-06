@@ -1,0 +1,112 @@
+package br.com.geac.backend.api.handler;
+
+import br.com.geac.backend.domain.exceptions.BadRequestException;
+import br.com.geac.backend.domain.exceptions.ConflictException;
+import br.com.geac.backend.domain.exceptions.ExceptionDetails;
+import org.jspecify.annotations.Nullable;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+@ControllerAdvice
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ExceptionDetails> handleConflictException(ConflictException ex) {
+
+        return new ResponseEntity<>(
+                ExceptionDetails.builder()
+                        .title("Conflict")
+                        .status(HttpStatus.CONFLICT.value())
+                        .timestamp(LocalDateTime.now())
+                        .details(ex.getClass().getSimpleName())
+                        .message("Conflict occurred: " + ex.getMessage())
+                        .build(), HttpStatus.CONFLICT
+
+        );
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ExceptionDetails> handleConflict(BadRequestException e) {
+        return new ResponseEntity<>(
+                ExceptionDetails.builder()
+                        .title("Bad Request, algo deu errado")
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .timestamp(LocalDateTime.now())
+                        .details(e.getClass().getSimpleName())
+                        .message(e.getMessage())
+                        .build(), HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @Override
+    protected  ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
+        Map<String, String> errorFields = new LinkedHashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+            errorFields.put(error.getField(), error.getDefaultMessage())
+        );
+
+        return new ResponseEntity<>(
+                ExceptionDetails.builder()
+                        .title("BAD REQUEST, invalid fields")
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .timestamp(LocalDateTime.now())
+                        .details(ex.getMessage().getClass().getSimpleName())
+                        .message(errorFields)
+                        .build(), HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public @Nullable ResponseEntity<Object> handleConflict(DataIntegrityViolationException e) {
+        return new ResponseEntity<>(
+                ExceptionDetails.builder()
+                        .title("Erro de integridade de dados")
+                        .status(HttpStatus.CONFLICT.value())
+                        .timestamp(LocalDateTime.now())
+                        .details(e.getClass().getSimpleName())
+                        .message(e.getMessage())
+                        .build(), HttpStatus.CONFLICT
+        );
+    }
+
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+public ResponseEntity<ExceptionDetails> handleBadCredentials(org.springframework.security.authentication.BadCredentialsException ex) {
+    return new ResponseEntity<>(
+            ExceptionDetails.builder()
+                    .title("Unauthorized")
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .timestamp(LocalDateTime.now())
+                    .details(ex.getClass().getSimpleName())
+                    .message(ex.getMessage())
+                    .build(), HttpStatus.UNAUTHORIZED
+    );
+}
+
+@ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+public ResponseEntity<ExceptionDetails> handleAuthentication(org.springframework.security.core.AuthenticationException ex) {
+    return new ResponseEntity<>(
+            ExceptionDetails.builder()
+                    .title("Unauthorized")
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .timestamp(LocalDateTime.now())
+                    .details(ex.getClass().getSimpleName())
+                    .message(ex.getMessage())
+                    .build(), HttpStatus.UNAUTHORIZED
+    );
+}
+
+}
