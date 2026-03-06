@@ -142,7 +142,7 @@ class EventControllerTest {
     }
 
     @Test
-@DisplayName("GET /events/{id} - Deve retornar 200 para ID inexistente retorna resposta do serviÃ§o")
+@DisplayName("GET /events/{id} - Deve retornar 200 para ID inexistente retorna resposta do servico")
 void getEventById_NotFound_ReturnsServiceBehavior() throws Exception {
     UUID id = UUID.randomUUID();
     when(eventService.getEventById(id)).thenReturn(null);
@@ -173,3 +173,4 @@ void getEventById_NotFound_ReturnsServiceBehavior() throws Exception {
                 .andExpect(status().isBadRequest());
     }
 }
+

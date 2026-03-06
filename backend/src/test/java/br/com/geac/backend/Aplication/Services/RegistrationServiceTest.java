@@ -76,7 +76,7 @@ class RegistrationServiceTest {
     // ==================== REGISTER TO EVENT ====================
 
     @Test
-    @DisplayName("Deve inscrever usuÃ¡rio no evento com sucesso")
+    @DisplayName("Deve inscrever usuario no evento com sucesso")
     void registerToEvent_Success() {
         setAuthentication(student);
 
@@ -95,7 +95,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando evento nÃ£o encontrado ao inscrever")
+    @DisplayName("Deve lancar excecao quando evento nao encontrado ao inscrever")
     void registerToEvent_EventNotFound_ThrowsException() {
         setAuthentication(student);
 
@@ -106,7 +106,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando usuÃ¡rio jÃ¡ estÃ¡ inscrito")
+    @DisplayName("Deve lancar excecao quando usuario ja esta inscrito")
     void registerToEvent_AlreadySubscribed_ThrowsException() {
         setAuthentication(student);
 
@@ -119,7 +119,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando usuÃ¡rio Ã© membro da organizaÃ§Ã£o promotora")
+    @DisplayName("Deve lancar excecao quando usuario e membro da organizacao promotora")
     void registerToEvent_MemberOfPromoterOrg_ThrowsException() {
         setAuthentication(student);
 
@@ -132,7 +132,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando evento estÃ¡ lotado")
+    @DisplayName("Deve lancar excecao quando evento esta lotado")
     void registerToEvent_MaxCapacity_ThrowsException() {
         setAuthentication(student);
         event.setMaxCapacity(10);
@@ -147,7 +147,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando evento nÃ£o estÃ¡ disponÃ­vel")
+    @DisplayName("Deve lancar excecao quando evento nao esta disponivel")
     void registerToEvent_EventNotAvailable_ThrowsException() {
         setAuthentication(student);
         event.setStatus(EventStatus.COMPLETED);
@@ -181,7 +181,7 @@ class RegistrationServiceTest {
     // ==================== CANCEL REGISTRATION ====================
 
     @Test
-    @DisplayName("Deve cancelar inscriÃ§Ã£o com sucesso")
+    @DisplayName("Deve cancelar inscricao com sucesso")
     void cancelRegistration_Success() {
         setAuthentication(student);
 
@@ -196,7 +196,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando inscriÃ§Ã£o nÃ£o encontrada ao cancelar")
+    @DisplayName("Deve lancar excecao quando inscricao nao encontrada ao cancelar")
     void cancelRegistration_NotFound_ThrowsException() {
         setAuthentication(student);
 
@@ -208,7 +208,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando presenÃ§a jÃ¡ foi validada")
+    @DisplayName("Deve lancar excecao quando presenca ja foi validada")
     void cancelRegistration_AlreadyAttended_ThrowsException() {
         setAuthentication(student);
         registration.setAttended(true);
@@ -224,7 +224,7 @@ class RegistrationServiceTest {
     // ==================== GET REGISTRATIONS BY EVENT ====================
 
     @Test
-    @DisplayName("Deve retornar lista de inscriÃ§Ãµes por evento")
+    @DisplayName("Deve retornar lista de inscricoes por evento")
     void getRegistrationsByEvent_Success() {
         setAuthentication(admin);
         when(organizerMemberRepository.existsByOrganizerIdAndUserId(any(), any())).thenReturn(true);
@@ -237,7 +237,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando evento nÃ£o encontrado ao buscar inscriÃ§Ãµes")
+    @DisplayName("Deve lancar excecao quando evento nao encontrado ao buscar inscricoes")
     void getRegistrationsByEvent_EventNotFound_ThrowsException() {
         when(eventRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -246,7 +246,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar lista vazia quando nÃ£o hÃ¡ inscriÃ§Ãµes")
+    @DisplayName("Deve retornar lista vazia quando nao ha inscricoes")
     void getRegistrationsByEvent_EmptyList() {
         setAuthentication(admin);
         when(organizerMemberRepository.existsByOrganizerIdAndUserId(any(), any())).thenReturn(true);
@@ -261,7 +261,7 @@ class RegistrationServiceTest {
     // ==================== MARK ATTENDANCE ====================
 
     @Test
-    @DisplayName("Deve marcar presenÃ§a em bulk com sucesso como admin")
+    @DisplayName("Deve marcar presenca em bulk com sucesso como admin")
     void markAttendanceInBulk_AdminSuccess() {
         setAuthentication(admin);
 
@@ -278,7 +278,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("NÃ£o deve emitir certificados quando attended Ã© false")
+    @DisplayName("Nao deve emitir certificados quando attended e false")
     void markAttendanceInBulk_NotAttended_NoCertificates() {
         setAuthentication(admin);
 
@@ -293,7 +293,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando evento nÃ£o encontrado ao marcar presenÃ§a")
+    @DisplayName("Deve lancar excecao quando evento nao encontrado ao marcar presenca")
     void markAttendanceInBulk_EventNotFound_ThrowsException() {
         setAuthentication(admin);
 
@@ -304,7 +304,7 @@ class RegistrationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando usuÃ¡rio nÃ£o Ã© membro da organizaÃ§Ã£o")
+    @DisplayName("Deve lancar excecao quando usuario nao e membro da organizacao")
     void markAttendanceInBulk_NotMember_ThrowsException() {
         setAuthentication(student);
 
@@ -318,7 +318,7 @@ class RegistrationServiceTest {
     // ==================== SAVE ALL ====================
 
     @Test
-    @DisplayName("Deve salvar lista de inscriÃ§Ãµes")
+    @DisplayName("Deve salvar lista de inscricoes")
     void saveAll_Success() {
         List<Registration> registrations = List.of(registration);
         registrationService.saveAll(registrations);
@@ -328,7 +328,7 @@ class RegistrationServiceTest {
     // ==================== GET UNNOTIFIED ====================
 
     @Test
-    @DisplayName("Deve retornar inscriÃ§Ãµes nÃ£o notificadas")
+    @DisplayName("Deve retornar inscricoes nao notificadas")
     void getUnotifiedRegistrationsById_Success() {
         when(registrationRepository.findByEventIdAndNotified(event.getId(), false))
                 .thenReturn(List.of(registration));
@@ -345,3 +345,4 @@ class RegistrationServiceTest {
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }
+

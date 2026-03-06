@@ -70,7 +70,7 @@ class RequirementServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando requisito nÃ£o encontrado")
+    @DisplayName("Deve lancar excecao quando requisito nao encontrado")
     void getById_NotFound_ThrowsException() {
         when(repository.findById(99)).thenReturn(Optional.empty());
 
@@ -91,7 +91,7 @@ class RequirementServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar lista vazia quando nÃ£o hÃ¡ requisitos")
+    @DisplayName("Deve retornar lista vazia quando nao ha requisitos")
     void getAll_EmptyList() {
         when(repository.findAll()).thenReturn(List.of());
 
@@ -101,7 +101,7 @@ class RequirementServiceTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar requisito com sucesso quando description nÃ£o Ã© null")
+    @DisplayName("Deve atualizar requisito com sucesso quando description nao e null")
     void updateRequirement_WithDescription_Success() {
         RequirementRequestDTO updateRequest = new RequirementRequestDTO("Nova descriÃ§Ã£o do requisito");
         when(repository.findById(1)).thenReturn(Optional.of(requirement));
@@ -126,7 +126,7 @@ class RequirementServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao atualizar requisito inexistente")
+    @DisplayName("Deve lancar excecao ao atualizar requisito inexistente")
     void updateRequirement_NotFound_ThrowsException() {
         when(repository.findById(99)).thenReturn(Optional.empty());
 
@@ -145,7 +145,7 @@ class RequirementServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao deletar requisito inexistente")
+    @DisplayName("Deve lancar excecao ao deletar requisito inexistente")
     void deleteRequirement_NotFound_ThrowsException() {
         when(repository.findById(99)).thenReturn(Optional.empty());
 
@@ -153,3 +153,4 @@ class RequirementServiceTest {
                 .isInstanceOf(RequirementNotFoundException.class);
     }
 }
+

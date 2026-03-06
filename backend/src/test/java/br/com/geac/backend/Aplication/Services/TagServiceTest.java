@@ -71,7 +71,7 @@ class TagServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando tag nÃ£o encontrada")
+    @DisplayName("Deve lancar excecao quando tag nao encontrada")
     void getById_NotFound_ThrowsException() {
         when(tagRepository.findById(99)).thenReturn(Optional.empty());
 
@@ -92,7 +92,7 @@ class TagServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar lista vazia quando nÃ£o hÃ¡ tags")
+    @DisplayName("Deve retornar lista vazia quando nao ha tags")
     void getAll_EmptyList() {
         when(tagRepository.findAll()).thenReturn(List.of());
 
@@ -116,7 +116,7 @@ class TagServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao atualizar tag inexistente")
+    @DisplayName("Deve lancar excecao ao atualizar tag inexistente")
     void updateTag_NotFound_ThrowsException() {
         when(tagRepository.findById(99)).thenReturn(Optional.empty());
 
@@ -135,7 +135,7 @@ class TagServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao deletar tag inexistente")
+    @DisplayName("Deve lancar excecao ao deletar tag inexistente")
     void deleteTag_NotFound_ThrowsException() {
         when(tagRepository.findById(99)).thenReturn(Optional.empty());
 
@@ -143,3 +143,4 @@ class TagServiceTest {
                 .isInstanceOf(TagNotFoundException.class);
     }
 }
+

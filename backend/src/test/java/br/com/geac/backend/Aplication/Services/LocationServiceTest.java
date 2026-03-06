@@ -59,7 +59,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve criar localizaÃ§Ã£o com sucesso")
+    @DisplayName("Deve criar localizacao com sucesso")
     void createLocation_Success() {
         when(locationRepository.existsByZipCodeAndNumberAndName(any(), any(), any())).thenReturn(false);
         when(locationMapper.toEntity(locationRequest)).thenReturn(location);
@@ -73,7 +73,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando localizaÃ§Ã£o jÃ¡ existe")
+    @DisplayName("Deve lancar excecao quando localizacao ja existe")
     void createLocation_AlreadyExists_ThrowsException() {
         when(locationRepository.existsByZipCodeAndNumberAndName(any(), any(), any())).thenReturn(true);
 
@@ -84,7 +84,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar localizaÃ§Ã£o por ID")
+    @DisplayName("Deve retornar localizacao por ID")
     void getById_Success() {
         when(locationRepository.findById(1)).thenReturn(Optional.of(location));
         when(locationMapper.toDto(location)).thenReturn(locationResponse);
@@ -95,7 +95,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando localizaÃ§Ã£o nÃ£o encontrada")
+    @DisplayName("Deve lancar excecao quando localizacao nao encontrada")
     void getById_NotFound_ThrowsException() {
         when(locationRepository.findById(99)).thenReturn(Optional.empty());
 
@@ -104,7 +104,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar todas as localizaÃ§Ãµes")
+    @DisplayName("Deve retornar todas as localizacoes")
     void getAll_Success() {
         when(locationRepository.findAll()).thenReturn(List.of(location));
         when(locationMapper.toDto(location)).thenReturn(locationResponse);
@@ -115,7 +115,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar lista vazia quando nÃ£o hÃ¡ localizaÃ§Ãµes")
+    @DisplayName("Deve retornar lista vazia quando nao ha localizacoes")
     void getAll_EmptyList() {
         when(locationRepository.findAll()).thenReturn(List.of());
 
@@ -125,7 +125,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar localizaÃ§Ã£o com sucesso")
+    @DisplayName("Deve atualizar localizacao com sucesso")
     void updateLocation_Success() {
         LocationPatchRequestDTO patchDTO = new LocationPatchRequestDTO(
                 "Novo Nome", null, null, null, null, null, null, null, null, null
@@ -143,7 +143,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao atualizar com nome duplicado")
+    @DisplayName("Deve lancar excecao ao atualizar com nome duplicado")
     void updateLocation_DuplicateName_ThrowsException() {
         LocationPatchRequestDTO patchDTO = new LocationPatchRequestDTO(
                 "Outro Local", null, null, null, null, null, null, null, null, null
@@ -157,7 +157,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao atualizar localizaÃ§Ã£o inexistente")
+    @DisplayName("Deve lancar excecao ao atualizar localizacao inexistente")
     void updateLocation_NotFound_ThrowsException() {
         when(locationRepository.findById(99)).thenReturn(Optional.empty());
 
@@ -167,7 +167,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve deletar localizaÃ§Ã£o com sucesso")
+    @DisplayName("Deve deletar localizacao com sucesso")
     void deleteLocation_Success() {
         when(locationRepository.findById(1)).thenReturn(Optional.of(location));
 
@@ -178,7 +178,7 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao deletar localizaÃ§Ã£o inexistente")
+    @DisplayName("Deve lancar excecao ao deletar localizacao inexistente")
     void deleteLocation_NotFound_ThrowsException() {
         when(locationRepository.findById(99)).thenReturn(Optional.empty());
 
@@ -186,3 +186,4 @@ class LocationServiceTest {
                 .isInstanceOf(LocationNotFoundException.class);
     }
 }
+
