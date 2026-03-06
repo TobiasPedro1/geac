@@ -71,7 +71,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando categoria nÃ£o encontrada")
+    @DisplayName("Deve lancar excecao quando categoria nao encontrada")
     void getCategoryById_NotFound_ThrowsException() {
         when(repository.findById(99)).thenReturn(Optional.empty());
 
@@ -92,7 +92,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar lista vazia quando nÃ£o hÃ¡ categorias")
+    @DisplayName("Deve retornar lista vazia quando nao ha categorias")
     void getAllCategory_EmptyList() {
         when(repository.findAll()).thenReturn(List.of());
 
@@ -117,7 +117,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao atualizar categoria inexistente")
+    @DisplayName("Deve lancar excecao ao atualizar categoria inexistente")
     void updateCategory_NotFound_ThrowsException() {
         when(repository.findById(99)).thenReturn(Optional.empty());
 
@@ -136,7 +136,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao deletar categoria inexistente")
+    @DisplayName("Deve lancar excecao ao deletar categoria inexistente")
     void deleteCategory_NotFound_ThrowsException() {
         when(repository.findById(99)).thenReturn(Optional.empty());
 
@@ -144,3 +144,4 @@ class CategoryServiceTest {
                 .isInstanceOf(RuntimeException.class);
     }
 }
+

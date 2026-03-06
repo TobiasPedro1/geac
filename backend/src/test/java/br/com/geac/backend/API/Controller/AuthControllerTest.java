@@ -43,7 +43,7 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /auth/register - Deve retornar 201 ao registrar usuÃ¡rio")
+    @DisplayName("POST /auth/register - Deve retornar 201 ao registrar usuario")
     void register_Success_Returns201() throws Exception {
         RegisterRequestDTO request = new RegisterRequestDTO(
                 "Douglas Henrique", "douglas@email.com", "senha123", "ORGANIZER"
@@ -62,7 +62,7 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /auth/register - Deve retornar 409 quando email jÃ¡ existe")
+    @DisplayName("POST /auth/register - Deve retornar 409 quando email ja existe")
     void register_EmailAlreadyExists_Returns409() throws Exception {
         RegisterRequestDTO request = new RegisterRequestDTO(
                 "Douglas", "douglas@email.com", "senha123", "STUDENT"
@@ -77,7 +77,7 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /auth/register - Deve retornar 400 quando dados invÃ¡lidos")
+    @DisplayName("POST /auth/register - Deve retornar 400 quando dados invalidos")
     void register_InvalidData_Returns400() throws Exception {
         RegisterRequestDTO request = new RegisterRequestDTO("", "", "123", "");
 
@@ -102,7 +102,7 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /auth/login - Deve retornar 401 com credenciais invÃ¡lidas")
+    @DisplayName("POST /auth/login - Deve retornar 401 com credenciais invalidas")
     void login_InvalidCredentials_Returns401() throws Exception {
         AuthRequestDTO request = new AuthRequestDTO("douglas@email.com", "senhaErrada");
         when(authService.login(any()))
@@ -121,3 +121,4 @@ class AuthControllerTest {
                 .andExpect(status().isNoContent());
     }
 }
+

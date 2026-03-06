@@ -121,7 +121,7 @@ class EventServiceTest {
     // ==================== CREATE EVENT ====================
 
     @Test
-    @DisplayName("Deve criar evento com sucesso quando usuÃ¡rio Ã© ORGANIZER")
+    @DisplayName("Deve criar evento com sucesso quando usuario e ORGANIZER")
     void createEvent_Success() {
         setAuthentication(organizer);
 
@@ -142,7 +142,7 @@ class EventServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar AccessDeniedException quando usuÃ¡rio Ã© STUDENT")
+    @DisplayName("Deve lancar AccessDeniedException quando usuario e STUDENT")
     void createEvent_StudentUser_ThrowsAccessDeniedException() {
         setAuthentication(student);
 
@@ -153,7 +153,7 @@ class EventServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando categoria nÃ£o encontrada")
+    @DisplayName("Deve lancar excecao quando categoria nao encontrada")
     void createEvent_CategoryNotFound_ThrowsException() {
         setAuthentication(organizer);
 
@@ -182,7 +182,7 @@ class EventServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar lista vazia quando nÃ£o hÃ¡ eventos")
+    @DisplayName("Deve retornar lista vazia quando nao ha eventos")
     void getAllEvents_EmptyList() {
         when(eventRepository.findAllWithRegistrationCount()).thenReturn(List.of());
 
@@ -210,7 +210,7 @@ class EventServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando evento nÃ£o encontrado por ID")
+    @DisplayName("Deve lancar excecao quando evento nao encontrado por ID")
     void getEventById_NotFound_ThrowsException() {
         UUID id = UUID.randomUUID();
         when(eventRepository.findById(id)).thenReturn(Optional.empty());
@@ -223,7 +223,7 @@ class EventServiceTest {
     // ==================== DELETE EVENT ====================
 
     @Test
-    @DisplayName("Deve deletar evento com sucesso quando usuÃ¡rio Ã© ADMIN")
+    @DisplayName("Deve deletar evento com sucesso quando usuario e ADMIN")
     void deleteEvent_AdminUser_Success() {
         User admin = new User();
         admin.setRole(Role.ADMIN);
@@ -248,3 +248,4 @@ class EventServiceTest {
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }
+

@@ -54,7 +54,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve criar organizaÃ§Ã£o com sucesso")
+    @DisplayName("Deve criar organizacao com sucesso")
     void createOrganizer_Success() {
         when(organizerRepository.existsByName("Org Teste")).thenReturn(false);
         when(organizerMapper.toEntity(organizerRequest)).thenReturn(organizer);
@@ -69,7 +69,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando organizaÃ§Ã£o jÃ¡ existe")
+    @DisplayName("Deve lancar excecao quando organizacao ja existe")
     void createOrganizer_AlreadyExists_ThrowsException() {
         when(organizerRepository.existsByName("Org Teste")).thenReturn(true);
 
@@ -81,7 +81,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar todas as organizaÃ§Ãµes")
+    @DisplayName("Deve retornar todas as organizacoes")
     void getAllOrganizers_Success() {
         when(organizerRepository.findAll()).thenReturn(List.of(organizer));
         when(organizerMapper.toResponseDTO(organizer)).thenReturn(organizerResponse);
@@ -92,7 +92,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar lista vazia quando nÃ£o hÃ¡ organizaÃ§Ãµes")
+    @DisplayName("Deve retornar lista vazia quando nao ha organizacoes")
     void getAllOrganizers_EmptyList() {
         when(organizerRepository.findAll()).thenReturn(List.of());
 
@@ -102,7 +102,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar organizaÃ§Ã£o por ID")
+    @DisplayName("Deve retornar organizacao por ID")
     void getOrganizerById_Success() {
         when(organizerRepository.findById(orgId)).thenReturn(Optional.of(organizer));
         when(organizerMapper.toResponseDTO(organizer)).thenReturn(organizerResponse);
@@ -114,7 +114,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando organizaÃ§Ã£o nÃ£o encontrada por ID")
+    @DisplayName("Deve lancar excecao quando organizacao nao encontrada por ID")
     void getOrganizerById_NotFound_ThrowsException() {
         when(organizerRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -123,7 +123,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar organizaÃ§Ã£o com sucesso")
+    @DisplayName("Deve atualizar organizacao com sucesso")
     void updateOrganizer_Success() {
         OrganizerRequestDTO updateRequest = new OrganizerRequestDTO("Novo Nome", "novo@email.com");
 
@@ -139,7 +139,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao atualizar com nome duplicado")
+    @DisplayName("Deve lancar excecao ao atualizar com nome duplicado")
     void updateOrganizer_DuplicateName_ThrowsException() {
         OrganizerRequestDTO updateRequest = new OrganizerRequestDTO("Outro Nome", "email@test.com");
 
@@ -166,7 +166,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve deletar organizaÃ§Ã£o com sucesso")
+    @DisplayName("Deve deletar organizacao com sucesso")
     void deleteOrganizer_Success() {
         when(organizerRepository.findById(orgId)).thenReturn(Optional.of(organizer));
 
@@ -176,7 +176,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o ao deletar organizaÃ§Ã£o inexistente")
+    @DisplayName("Deve lancar excecao ao deletar organizacao inexistente")
     void deleteOrganizer_NotFound_ThrowsException() {
         when(organizerRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -185,7 +185,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar organizaÃ§Ãµes do usuÃ¡rio")
+    @DisplayName("Deve retornar organizacoes do usuario")
     void getAllUserOrganizer_Success() {
         OrganizerMember member = new OrganizerMember();
         member.setOrganizer(organizer);
@@ -200,7 +200,7 @@ class OrganizerServiceTest {
     }
 
     @Test
-    @DisplayName("Deve retornar lista vazia quando usuÃ¡rio nÃ£o tem organizaÃ§Ãµes")
+    @DisplayName("Deve retornar lista vazia quando usuario nao tem organizacoes")
     void getAllUserOrganizer_EmptyList() {
         when(organizerMemberRepository.getAllByUserId(any())).thenReturn(List.of());
         when(organizerRepository.findAllByIdIn(any())).thenReturn(List.of());
@@ -210,3 +210,4 @@ class OrganizerServiceTest {
         assertThat(result).isEmpty();
     }
 }
+

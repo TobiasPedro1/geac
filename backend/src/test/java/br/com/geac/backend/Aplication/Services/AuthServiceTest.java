@@ -59,7 +59,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Deve registrar usuÃ¡rio com sucesso")
+    @DisplayName("Deve registrar usuario com sucesso")
     void registerUser_Success() {
         when(userRepository.existsByEmail(registerRequest.email())).thenReturn(false);
         when(userMapper.registerToUser(registerRequest)).thenReturn(user);
@@ -78,7 +78,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando email jÃ¡ existe")
+    @DisplayName("Deve lancar excecao quando email ja existe")
     void registerUser_EmailAlreadyExists_ThrowsException() {
         when(userRepository.existsByEmail(registerRequest.email())).thenReturn(true);
 
@@ -104,7 +104,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Deve chamar encoder ao registrar usuÃ¡rio")
+    @DisplayName("Deve chamar encoder ao registrar usuario")
     void registerUser_ShouldEncodePassword() {
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userMapper.registerToUser(any())).thenReturn(user);
@@ -125,3 +125,4 @@ class AuthServiceTest {
         assertThatCode(() -> authService.logout()).doesNotThrowAnyException();
     }
 }
+
