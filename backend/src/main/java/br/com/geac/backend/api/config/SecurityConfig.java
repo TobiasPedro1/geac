@@ -29,11 +29,13 @@ public class SecurityConfig {
     private static final String CATEGORIES_ENDPOINT = "/categories";
     private static final String ORGANIZER_ENDPOINT = "/organizers/**";
 
+    @SuppressWarnings("java:S4502")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         return http
                 .cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
+                // API stateless com JWT Bearer (sem sessao/cookies), entao CSRF nao se aplica.
+                .csrf(AbstractHttpConfigurer::disable) // NOSONAR
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
 
