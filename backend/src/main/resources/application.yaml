@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: postgres
+    password: admin
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -20,11 +20,11 @@ spring:
     scheduling:
       pool:
         size: 5
-  mail:
-    host: ${MAIL_HOST}
+mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
     port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: ${MAIL_USERNAME:dev@email.com}
+    password: ${MAIL_PASSWORD:dev-password}
     properties:
       mail:
         smtp:

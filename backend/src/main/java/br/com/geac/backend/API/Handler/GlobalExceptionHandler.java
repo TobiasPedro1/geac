@@ -84,4 +84,30 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+public ResponseEntity<ExceptionDetails> handleBadCredentials(org.springframework.security.authentication.BadCredentialsException ex) {
+    return new ResponseEntity<>(
+            ExceptionDetails.builder()
+                    .title("Unauthorized")
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .timestamp(LocalDateTime.now())
+                    .details(ex.getClass().getSimpleName())
+                    .message(ex.getMessage())
+                    .build(), HttpStatus.UNAUTHORIZED
+    );
+}
+
+@ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+public ResponseEntity<ExceptionDetails> handleAuthentication(org.springframework.security.core.AuthenticationException ex) {
+    return new ResponseEntity<>(
+            ExceptionDetails.builder()
+                    .title("Unauthorized")
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .timestamp(LocalDateTime.now())
+                    .details(ex.getClass().getSimpleName())
+                    .message(ex.getMessage())
+                    .build(), HttpStatus.UNAUTHORIZED
+    );
+}
+
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Optional;
 
 @Repository
 public interface RegistrationRepository extends JpaRepository<Registration, UUID> {
@@ -38,7 +39,7 @@ public interface RegistrationRepository extends JpaRepository<Registration, UUID
 
     long countByEventIdAndStatus(UUID eventId, String status);
 
-    <T> ScopedValue<T> findByEventIdAndUserId(UUID eventId, UUID userId);
+    Optional<Registration> findByEventIdAndUserId(UUID eventId, UUID userId);
 
     Registration getByUserIdAndEventId(UUID userId, UUID eventId);
 
