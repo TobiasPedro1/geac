@@ -9,3 +9,11 @@ export interface EvaluationResponseDTO {
   comment: string;
   createdAt: string;
 }
+
+export interface OrganizerEventFeedbackResponseDTO {
+  eventId: string;
+  eventTitle: string;
+  averageRating: number;
+  totalFeedbacks: number;
+  feedbacks: EvaluationResponseDTO[];
+}

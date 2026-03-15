@@ -17,6 +17,7 @@ import {
   Pencil,
   Trash2,
   Eye,
+  MessageSquareText,
   Calendar,
   Users,
   MapPin,
@@ -441,6 +442,15 @@ export default function EventManageContent({
                           >
                             <Eye className="w-4 h-4" />
                           </Link>
+                          {event.status === "COMPLETED" && (
+                            <Link
+                              href={`/events/${event.id}/feedback`}
+                              className="p-2 text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors"
+                              title="Ver feedbacks"
+                            >
+                              <MessageSquareText className="w-4 h-4" />
+                            </Link>
+                          )}
                           <button
                             onClick={() => handleEditClick(event.id)}
                             disabled={loadingEventId === event.id}
@@ -522,7 +532,7 @@ export default function EventManageContent({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 pt-1">
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
                     <Link
                       href={`/events/${event.id}`}
                       className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-lg transition-colors"
@@ -530,6 +540,15 @@ export default function EventManageContent({
                       <Eye className="w-3.5 h-3.5" />
                       Ver
                     </Link>
+                    {event.status === "COMPLETED" && (
+                      <Link
+                        href={`/events/${event.id}/feedback`}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-lg transition-colors"
+                      >
+                        <MessageSquareText className="w-3.5 h-3.5" />
+                        Feedbacks
+                      </Link>
+                    )}
                     <button
                       onClick={() => handleEditClick(event.id)}
                       disabled={loadingEventId === event.id}
