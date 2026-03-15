@@ -2,18 +2,22 @@ package br.com.geac.backend.aplication.services;
 
 import br.com.geac.backend.aplication.dtos.request.EvaluationRequestDTO;
 import br.com.geac.backend.aplication.dtos.response.EvaluationResponseDTO;
+import br.com.geac.backend.aplication.dtos.response.OrganizerEventFeedbackResponseDTO;
 import br.com.geac.backend.aplication.mappers.EvaluationMapper;
 import br.com.geac.backend.domain.entities.Evaluation;
 import br.com.geac.backend.domain.entities.Event;
+import br.com.geac.backend.domain.entities.Organizer;
 import br.com.geac.backend.domain.entities.Registration;
 import br.com.geac.backend.domain.entities.User;
 import br.com.geac.backend.domain.enums.EventStatus;
+import br.com.geac.backend.domain.enums.Role;
 import br.com.geac.backend.domain.exceptions.BadRequestException;
 import br.com.geac.backend.domain.exceptions.EventNotFinishedException;
 import br.com.geac.backend.domain.exceptions.EventNotFoundException;
 import br.com.geac.backend.domain.exceptions.RegistrationNotFoundException;
 import br.com.geac.backend.infrastucture.repositories.EvaluationRepository;
 import br.com.geac.backend.infrastucture.repositories.EventRepository;
+import br.com.geac.backend.infrastucture.repositories.OrganizerMemberRepository;
 import br.com.geac.backend.infrastucture.repositories.RegistrationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +27,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +47,7 @@ class EvaluationServiceTest {
     @Mock private EvaluationRepository evaluationRepository;
     @Mock private RegistrationRepository registrationRepository;
     @Mock private EventRepository eventRepository;
+    @Mock private OrganizerMemberRepository organizerMemberRepository;
     @Mock private EvaluationMapper mapper;
 
     @InjectMocks
@@ -56,11 +63,16 @@ class EvaluationServiceTest {
         user = new User();
         user.setId(UUID.randomUUID());
         user.setEmail("user@test.com");
+        user.setRole(Role.ORGANIZER);
 
         event = new Event();
         event.setId(UUID.randomUUID());
         event.setTitle("Event");
         event.setStatus(EventStatus.COMPLETED);
+        Organizer organizer = new Organizer();
+        organizer.setId(UUID.randomUUID());
+        organizer.setName("Organizer");
+        event.setOrganizer(organizer);
 
         registration = new Registration();
         registration.setId(UUID.randomUUID());
@@ -171,6 +183,76 @@ class EvaluationServiceTest {
         List<EvaluationResponseDTO> result = service.getEventEvaluations(eventId);
 
         assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("getOrganizerEventFeedbacks deve lancar excecao quando evento nao existe")
+    void getOrganizerEventFeedbacks_EventNotFound() {
+        UUID eventId = UUID.randomUUID();
+        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.getOrganizerEventFeedbacks(eventId, user))
+                .isInstanceOf(EventNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("getOrganizerEventFeedbacks deve lancar excecao quando usuario nao pertence a organizacao")
+    void getOrganizerEventFeedbacks_AccessDenied() {
+        UUID eventId = event.getId();
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(organizerMemberRepository.existsByOrganizerIdAndUserId(event.getOrganizer().getId(), user.getId()))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> service.getOrganizerEventFeedbacks(eventId, user))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    @DisplayName("getOrganizerEventFeedbacks deve retornar media e feedbacks ordenados por data")
+    void getOrganizerEventFeedbacks_Success() {
+        UUID eventId = event.getId();
+        Evaluation olderEval = new Evaluation();
+        Evaluation newerEval = new Evaluation();
+
+        EvaluationResponseDTO olderResponse = new EvaluationResponseDTO(
+                1L, registration.getId(), eventId, "Event", user.getId(), "User", 4, "Bom", LocalDateTime.now().minusDays(1)
+        );
+        EvaluationResponseDTO newerResponse = new EvaluationResponseDTO(
+                2L, registration.getId(), eventId, "Event", user.getId(), "User", 5, "Excelente", LocalDateTime.now()
+        );
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(organizerMemberRepository.existsByOrganizerIdAndUserId(event.getOrganizer().getId(), user.getId()))
+                .thenReturn(true);
+        when(evaluationRepository.findAllByRegistrationEvent(event)).thenReturn(List.of(olderEval, newerEval));
+        when(mapper.toDTO(olderEval)).thenReturn(olderResponse);
+        when(mapper.toDTO(newerEval)).thenReturn(newerResponse);
+
+        OrganizerEventFeedbackResponseDTO result = service.getOrganizerEventFeedbacks(eventId, user);
+
+        assertThat(result.eventId()).isEqualTo(eventId);
+        assertThat(result.eventTitle()).isEqualTo("Event");
+        assertThat(result.totalFeedbacks()).isEqualTo(2);
+        assertThat(result.averageRating()).isEqualTo(4.5d);
+        assertThat(result.feedbacks()).extracting(EvaluationResponseDTO::id)
+                .containsExactly(2L, 1L);
+    }
+
+    @Test
+    @DisplayName("getOrganizerEventFeedbacks deve permitir acesso para admin")
+    void getOrganizerEventFeedbacks_AdminSuccess() {
+        UUID eventId = event.getId();
+        User admin = new User();
+        admin.setId(UUID.randomUUID());
+        admin.setRole(Role.ADMIN);
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(evaluationRepository.findAllByRegistrationEvent(event)).thenReturn(List.of());
+
+        OrganizerEventFeedbackResponseDTO result = service.getOrganizerEventFeedbacks(eventId, admin);
+
+        assertThat(result.totalFeedbacks()).isZero();
+        verify(organizerMemberRepository, never()).existsByOrganizerIdAndUserId(any(), any());
     }
 }
 

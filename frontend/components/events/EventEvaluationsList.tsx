@@ -3,10 +3,12 @@ import { Star, MessageSquare } from "lucide-react";
 
 interface EventEvaluationsListProps {
   evaluations: EvaluationResponseDTO[];
+  commentsTitle?: string;
 }
 
 export function EventEvaluationsList({
   evaluations,
+  commentsTitle = "Comentários Recentes",
 }: Readonly<EventEvaluationsListProps>) {
   if (!evaluations || evaluations.length === 0) {
     return (
@@ -83,7 +85,7 @@ export function EventEvaluationsList({
 
       <div className="space-y-4">
         <h3 className="text-lg font-bold text-zinc-900 dark:text-white border-b border-zinc-200 dark:border-zinc-800 pb-2">
-          Comentários Recentes
+          {commentsTitle}
         </h3>
 
         {evaluations.map((ev) => {

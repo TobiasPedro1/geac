@@ -1,5 +1,6 @@
 package br.com.geac.backend.api.controller;
 
+import br.com.geac.backend.aplication.dtos.response.OrganizerEventFeedbackResponseDTO;
 import br.com.geac.backend.aplication.dtos.response.EvaluationResponseDTO;
 import br.com.geac.backend.aplication.dtos.request.EvaluationRequestDTO;
 import br.com.geac.backend.aplication.services.EvaluationService;
@@ -7,6 +8,7 @@ import br.com.geac.backend.domain.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,5 +30,14 @@ public class EvaluationController {
     @GetMapping("/{id}")
     public ResponseEntity<List<EvaluationResponseDTO>> findAllByEvent(@PathVariable UUID id){
         return ResponseEntity.ok(evaluationService.getEventEvaluations(id));
+    }
+
+    @GetMapping("/event/{id}/organizer")
+    @PreAuthorize("hasAnyRole('ORGANIZER', 'ADMIN')")
+    public ResponseEntity<OrganizerEventFeedbackResponseDTO> findOrganizerEventFeedbacks(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal User authenticatedUser
+    ) {
+        return ResponseEntity.ok(evaluationService.getOrganizerEventFeedbacks(id, authenticatedUser));
     }
 }

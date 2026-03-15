@@ -96,7 +96,7 @@ public ResponseEntity<ExceptionDetails> handleBadCredentials(org.springframework
     );
 }
 
-@ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
 public ResponseEntity<ExceptionDetails> handleAuthentication(org.springframework.security.core.AuthenticationException ex) {
     return new ResponseEntity<>(
             ExceptionDetails.builder()
@@ -108,5 +108,18 @@ public ResponseEntity<ExceptionDetails> handleAuthentication(org.springframework
                     .build(), HttpStatus.UNAUTHORIZED
     );
 }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ExceptionDetails> handleAccessDenied(org.springframework.security.access.AccessDeniedException ex) {
+        return new ResponseEntity<>(
+                ExceptionDetails.builder()
+                        .title("Forbidden")
+                        .status(HttpStatus.FORBIDDEN.value())
+                        .timestamp(LocalDateTime.now())
+                        .details(ex.getClass().getSimpleName())
+                        .message(ex.getMessage())
+                        .build(), HttpStatus.FORBIDDEN
+        );
+    }
 
 }
